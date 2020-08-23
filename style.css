@@ -1,0 +1,63 @@
+* {
+    font-family: sans-serif;
+    color: black;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+a h2 {
+    color: blue;
+}
+
+body {
+    background-color: darkgray;
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    background-color: white;
+    max-width: 1000px;
+    min-height: 100%;
+    margin: auto;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+    padding-bottom: 50px;
+}
+
+.title {
+    padding: 50px;
+    background-size: cover;
+    background-color: gray;
+}
+
+.title.alaska {
+    background-image: url(terrain/alaska.jpg);
+}
+
+.title.alaska h1 {
+    color: white;
+}
+
+.title h1 {
+    color: black;
+}
+
+.content {
+    padding: 0 50px;
+}
+
+.tags {
+    background-color: lightgray;
+    padding: 5px 50px;
+}
+
+.content * {
+    background-color: white;
+}
+
+iframe {
+    margin: auto;
+}

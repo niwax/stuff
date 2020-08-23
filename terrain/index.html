@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>Land surface area including elevation</title>
+    <link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+
+<body>
+    <main>
+        <div class="title alaska">
+            <h1>Land surface area including elevation</h1>
+        </div>
+        <div class="tags">
+            23.08.2020 | <a href="https://twitter.com/niwasox">Niel Wagensommer</a>
+        </div>
+        <div class="content">
+            <h2>The question</h2>
+            <p>On <a href="https://aproblemsquared.libsyn.com/height-matters-and-dish-splatters">this episode of the "A Problem Squared" podcast</a>, a viewer asked Bec Hill and Matt Parker to investigate how the estimated surface area of a country changes when taking into account topography. This turned out to be a much harder problem than expected, as he explains in this video:</p>
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/PtKhbbcc1Rc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <p>If you want to figure out the actual area when taking into account topography, you run into the fractal problem. As Matt explains, the higher your resolution gets, the more distorting features you get in your data. First mountains, then gullies and at some point ridges between stones. So the results I figured out are all relative to a resolution.</p>
+            <h2>The data</h2>
+            <p>If you are looking for any kind of geographical data, <a href="https://search.earthdata.nasa.gov/search">NASA has you covered</a>. Unfortunately, those datasets can get quite large. The ALOS_PALSAR_RTC_HIGH_RES with 1 arcsecond resolution and worldwide coverage is a nice 119.1TB. For our purposes, we'll stick with the <a href="https://visibleearth.nasa.gov/images/73934/topography">GEBCO dataset</a> which you can get as a nice simply 21600x10800 PNG file. The coordinates for each pixel represent latitude and longitude. The brightness between 0-255 represents heights from 0m to 6400m. This gives us a resolution at the equator of 40075km/21600px = 1.85km/px horizontally and 6400m/255 = 25m vertically. At 60° latitude, resolution in longitude gets even better at 40075km*cos(60°)/21600px = 0.93km/px. Resolution in latitude stays constant at any position.</p>
+            <h2>The process</h2>
+            <p>To find out how much topography distorts surface area, I estimated the local distortion around each pixel. First the code constructs a region of 5x5 samples around the current pixel. These samples are then transformed into 3D positions based on latitude, longitude and elevation assuming a round Earth - once at sea level and once including topography from the dataset. The surface area of this patch is approximated by turning it into a mesh of 16 quadrilaterals split into a total of 32 triangles and taking the sum of their surface area. I did this to avoid calculating the actual surface ares which leads down <a href="https://arxiv.org/abs/math-ph/0608043">a rabbit hole of mathematical questions</a>, and I don't need to be dealing with Chebyshev polynomial expansion on my day off. The result is good enough. Once you have the results for the flat and distorted patch, finding out the rate of distortion is as easy as dividing one by the other.</p>
+            <h2>The result</h2>
+            <p>I ran the whole process at 100%, 20% and 10% resolution versions of the base image, roughly 2km, 10km and 20km. All the code can be found on <a href="https://github.com/niwax/stuff/terrain/">GitHub</a>. Here are the links to the results at full resolution: <a>10%</a> <a>20%</a> <a>100%</a></p>
+            <p>Some observations:</p>
+            <ul>
+                <li>The general height of a territory introduces some distortion compared to taking the same measurement at sea level, but this is on the order of 0.03%.</li>
+                <li>Because of this, assuming a round Earth doesn't really matter. The effect from ignoring 1-2km or obloid-ness is masked by the noise from the average elevation of each territory.</li>
+                <li>There is some coastline erosion at lower resolutions since a full 5x5 region of valid samples needs to exist around each point for it to be evaluated. The same can be seen around Mt. Everest since the data only goes to 6400m.</li>
+                <li>The most extreme distortion is in mountainous terrain at the highest resolution. The image below is shows distortions as high as 20% around Denali which sticks out 6190m over Alaska which is only around 540m on average and at sea level not far from the mountains.</li>
+            </ul>
+            <img src="alaska.png" width="100%" />
+            <p></p>
+        </div>
+    </main>
+</body>
+
+</html>
